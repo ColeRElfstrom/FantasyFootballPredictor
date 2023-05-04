@@ -48,14 +48,14 @@ full_df = full_df.drop(columns=["Tm"])
 
 from google.cloud import storage
 
-path_to_private_key = './gcp_key.json'
-client = storage.Client.from_service_account_json(json_credentials_path=path_to_private_key)
+# path_to_private_key = './gcp_key.json'
+# client = storage.Client.from_service_account_json(json_credentials_path=path_to_private_key)
 
-# The NEW bucket on GCS in which to write the CSV file
-bucket = client.bucket('demo-bucket-325ce')
-# The name assigned to the CSV file on GCS
-blob = bucket.blob('test-data.csv')
-blob.upload_from_string(full_df.to_csv(), 'text/csv')
+# # The NEW bucket on GCS in which to write the CSV file
+# bucket = client.bucket('demo-bucket-325ce')
+# # The name assigned to the CSV file on GCS
+# blob = bucket.blob('test-data.csv')
+# blob.upload_from_string(full_df.to_csv(), 'text/csv')
 
 
 
@@ -156,23 +156,30 @@ def get_player_data(name):
     temp_df.loc[:, "avg_ppg"] = mean
     return temp_df
 
+def get_all_player_data():
+       uniques = train_df["player_name"].unique()
+       ret_df = pd.DataFrame()
+       for name in uniques:
+              temp_df = get_player_data(name)
+              ret_df = pd.concat([ret_df, temp_df])
+       return ret_df
+
+
+
 
 from sklearn.model_selection import train_test_split
  
 # Read data
-data = get_player_data("Allen Robinson")
-data.append(get_player_data("Tyler Lockett"))
+data = get_all_player_data()
 data = data[["fantasy_points_ppr", "ppg", "avg_ppg"]]
 data.fillna(0)
 X, y = data.drop(columns="fantasy_points_ppr").values.tolist(), data["fantasy_points_ppr"].tolist()
 
- 
 # train-test split for model evaluation
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, shuffle=True)
  
 import numpy as np
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 
 
 reg = LinearRegression()
@@ -180,6 +187,8 @@ reg.fit(X_train, y_train)
 
 y_pred = reg.predict(X_test)
 
+from sklearn.metrics import r2_score
+print(r2_score(y_test, y_pred))
 
 def train(player):
        reg = LinearRegression()
