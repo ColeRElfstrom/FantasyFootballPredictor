@@ -35,7 +35,7 @@ def run(player):
 
 
 def format():
-    st.title('Cole\'s Fantasy Football Predicitor')
+    st.title('Cole\'s Fantasy Football Predictor')
     player = st.multiselect('Select', col_list, on_change=ss_change())
     st.button('RUN', on_click=run, args=player)
 
