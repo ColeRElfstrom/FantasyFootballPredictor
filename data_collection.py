@@ -176,7 +176,7 @@ data.fillna(0)
 X, y = data.drop(columns="fantasy_points_ppr").values.tolist(), data["fantasy_points_ppr"].tolist()
 
 # train-test split for model evaluation
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.9, shuffle=True)
  
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -202,7 +202,7 @@ def train(player):
        # train-test split for model evaluation
        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.95, shuffle=True)
 
-       reg.fit(X_train, y_train)
+       #reg.fit(X_train, y_train)
 
        y_pred = reg.predict(X_test)
 
