@@ -1,6 +1,5 @@
 import nfl_data_py as nfl
 import pandas as pd
-from tabulate import tabulate
 
 df_2022 = nfl.import_weekly_data([2022], columns=['week', 'player_id', 'passing_yards', 'passing_tds', 'interceptions', 'rushing_yards',
        'rushing_tds', 'rushing_fumbles_lost', 'rushing_2pt_conversions', 'receptions', 'receiving_yards', 'receiving_tds', 
