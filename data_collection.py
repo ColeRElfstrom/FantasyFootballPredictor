@@ -35,11 +35,11 @@ full_df = full_df.drop(columns=["away_team", "home_team"])
 
 def_df = pd.read_csv("./defense.csv")
 
-def_df = def_df[["Tm", "Pts/G"]]
-def_df = def_df.rename(columns={"Pts/G": "ppg"})
+def_df = def_df.rename(columns={"P_Y/G": "pypg", "R_Y/G": "rypg"})
 
 for index, row in def_df.iterrows():
-       row.ppg = row.ppg / def_df.iloc[32]["ppg"]
+       row.pypg = row.pypg / def_df.iloc[32]["pypg"]
+       row.rypg = row.rypg / def_df.iloc[32]["rypg"]
        def_df.iloc[index] = row
 
 full_df = full_df.merge(def_df, left_on=["Opponent"], right_on=["Tm"], how="inner")
@@ -48,20 +48,9 @@ full_df = full_df.drop(columns=["Tm"])
 
 from google.cloud import storage
 
-# path_to_private_key = './gcp_key.json'
-# client = storage.Client.from_service_account_json(json_credentials_path=path_to_private_key)
 
-# # The NEW bucket on GCS in which to write the CSV file
-# bucket = client.bucket('demo-bucket-325ce')
-# # The name assigned to the CSV file on GCS
-# blob = bucket.blob('test-data.csv')
-# blob.upload_from_string(full_df.to_csv(), 'text/csv')
-
-
-
-
-fpvd_df = full_df[["player_name", "fantasy_points_ppr", "Opponent", "ppg"]]
-train_df = full_df[["player_name", "fantasy_points_ppr", "ppg", "position", "week", "temp", "wind" ]]
+fpvd_df = full_df[["player_name", "fantasy_points_ppr", "Opponent", "rypg", "pypg"]]
+train_df = full_df[["player_name", "fantasy_points_ppr", "rypg", "pypg", "position", "week", "temp", "wind" ]]
 
 
 uniques = fpvd_df["Opponent"].unique()
@@ -71,78 +60,7 @@ fp_teams = pd.DataFrame(uniques, columns=["team"])
 
 scores_sum = []
 
-# for index, team in fp_teams.iterrows():
-#        scores_sum.append(0)
-#        for p_index, player in fpvd_df.iterrows():
-#               if team.team == player.Opponent:
-#                     scores_sum[index] += player.fantasy_points_ppr
-
-# avg = sum(scores_sum) / 32
-
-
-# avg_scores = []
-
-# for team in scores_sum:
-#        avg_scores.append(team / avg)
-
-# fp_teams["score"] = avg_scores
-
-
-# fpvd_df = fpvd_df.merge(fp_teams, left_on="Opponent", right_on="team", how="inner")
-
-# fpvd_df = fpvd_df.drop(columns=["team"])
-
-# def_df = def_df.merge(fp_teams, left_on="Tm", right_on="team", how="inner")
-# def_df = def_df.drop(columns=["team"])
-
 from matplotlib import pyplot as plt
-
-# corr = def_df["ppg"].corr(def_df["score"])
-
-
-# plt.plot(def_df["ppg"], def_df["score"])
-# plt.xlabel("Defense PPG Allowed AVG")
-# plt.ylabel("Defense Fantasy Points Allowed AVG")
-# plt.show()
-
-
-# temp_df = full_df[["temp", "fantasy_points_ppr"]]
-
-# temp_df = temp_df.dropna()
-
-# uniques = temp_df["temp"].unique()
-
-# temp_unique = pd.DataFrame(uniques, columns=["temp"])
-
-
-# temp_sum = []
-# temp_count = []
-
-# for index, temp in temp_unique.iterrows():
-#        temp_sum.append(0)
-#        temp_count.append(0)
-#        for p_index, player in temp_df.iterrows():
-#               if temp.temp == player.temp:
-#                     temp_sum[index] += player.fantasy_points_ppr
-#                     temp_count[index] += 1
-
-
-# temp_scores = []
-
-# for index in range(len(temp_count)):
-#        temp_scores.append(temp_sum[index] / temp_count[index])
-
-# temp_unique["scores"] = temp_scores
-
-
-# corr = temp_unique["scores"].corr(temp_unique["temp"])
-
-# temp_unique = temp_unique.sort_values("temp")
-
-# # plt.plot(temp_unique["temp"], temp_unique["scores"])
-# # plt.xlabel("Temperature (F)")
-# # plt.ylabel("Fantasy Points")
-# # plt.show()
 
 def return_full_df():
        uniques = train_df["player_name"].unique()
@@ -154,6 +72,10 @@ def get_player_data(name):
     temp_df = train_df.loc[train_df["player_name"] == name].copy()
     mean = temp_df["fantasy_points_ppr"].mean()
     temp_df.loc[:, "avg_ppg"] = mean
+    if('RB' in temp_df['position']):
+       temp_df["ppg"] = temp_df["rypg"]
+    else:
+       temp_df["ppg"] = temp_df["pypg"]
     return temp_df
 
 def get_all_player_data():
