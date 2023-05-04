@@ -15,6 +15,13 @@ click = False
 if 'count' not in st.session_state:
     st.session_state.count = 0
 
+def ss_change():
+    st.session_state.count += 1
+    if st.session_state.count != 1:
+        st.session_state.count = 0
+    else:
+        st.session_state.count -= 1
+
 
 def run(player):
     format()
@@ -29,10 +36,11 @@ def run(player):
 
 def format():
     st.title('Cole\'s Fantasy Football Predicitor')
-    player = st.multiselect('Select', col_list)
-    st.button('RUN', on_click=run, args=(player))
+    player = st.selectbox('Select', col_list, on_change=ss_change())
+    player = [player]
+    st.button('RUN', on_click=run, args=player)
 
 
-if st.session_state.count < 1:
+if st.session_state.count == 0:
     format()
 
