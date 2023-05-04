@@ -191,8 +191,6 @@ from sklearn.metrics import r2_score
 print(r2_score(y_test, y_pred))
 
 def train(player):
-       reg = LinearRegression()
-
        data = get_player_data(player)
        data = data[["fantasy_points_ppr", "ppg", "avg_ppg"]]
        data.fillna(0)
