@@ -2,7 +2,9 @@
 
 ### Welcome to Cole's Fantasy Football Predictor 
 
-If you go to the following website you can input a player to view their predicted fantasy score. 
+If you go to the following website you can input a player to view their predicted fantasy score.
+
+([My Predictor]([https://link-url-here.org](https://colerelfstrom-fantasyfootballpredictor-home-page-8x58sc.streamlit.app/))
 
 Currently the app is displaying the actual score as well since we are out of season. 
 
