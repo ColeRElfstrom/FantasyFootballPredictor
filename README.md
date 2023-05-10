@@ -10,3 +10,5 @@ Currently the app is displaying the actual score as well since we are out of sea
 
 Once the 2023 season begins the app will be updated to the current week and the model will return a prediction for the next week.
 
+For info about the background of the project, or how it came together open the writeup jupyter notebook
+
