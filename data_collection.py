@@ -37,6 +37,8 @@ def_df = pd.read_csv("./defense.csv")
 
 def_df = def_df.rename(columns={"P_Y/G": "pypg", "R_Y/G": "rypg"})
 
+print(full_df)
+
 for index, row in def_df.iterrows():
        row.pypg = row.pypg / def_df.iloc[32]["pypg"]
        row.rypg = row.rypg / def_df.iloc[32]["rypg"]
